@@ -281,9 +281,191 @@ async function getData() {
    try {
       await fetch('');
    } catch (error) {
+      // error: unknown
+
       // без сужения error у нас типа unknown
+      // эта проверка лучше, чем код ниже
+      // тут мы сужаем error до типа Error
       if (error instanceof Error) {
-         console.log(error.message);
+         console.log(error.message); // error: Error
       }
    }
+}
+
+async function getDataForce() {
+   try {
+      await fetch('');
+   } catch (error) {
+      // error: unknown
+
+      // это плохая практика явно делать типом error, надо сначала сделать проверку
+      // потому что у нас в catch приходит error типа unknown
+      const err = error as Error; // err: Error
+   }
+}
+
+// Union
+// А тут мы берем самый широкий тип
+type U1 = unknown | null; // только unknown
+
+// Intersection
+// unknown - это более широкое понятие, поэтому приводится к более узкому
+type I1 = unknown & null; // только null
+type I2 = unknown & string; // только string
+
+// Never - никогда такого не произойдет
+// поможет сделать код более безопасным
+
+// функция никогда ничего не вернет
+function generateError(message: string): never {
+   throw new Error(message);
+}
+
+function dumpError(): never {
+   while (true) {}
+}
+
+function recursion(): never {
+   return recursion();
+}
+
+// const a: never = 1; // Тип "number" не может быть назначен для типа "never"
+const a: void = undefined;
+
+type PaymentAction = 'refund' | 'checkout';
+
+function processAction(action: PaymentAction) {
+   switch (action) {
+      case 'refund':
+         //...
+         break;
+      case 'checkout':
+         //...
+         break;
+      default:
+         const _: never = action; // отлавливаем ошибку на Compile Time
+         throw new Error(`Unknown action${action}`);
+   }
+}
+
+function isString(x: string | number): boolean {
+   if (typeof x === 'string') {
+      return true;
+   } else if (typeof x === 'number') {
+      return false;
+   }
+
+   // если мы не используем обычный else,
+   // то неявно может возвращаться undefined и эту ошибку надо отработать
+   generateError('error'); // never - указано явное возвращение из функции
+}
+
+// таким образом never помогает нам ограничить какие-то ветки, какие-то случаи,
+// когда мы должны явно проходить проверку по типам и какую-то ветку блокировать, если мы не хотим туда попасть
+
+// Null
+const n: null = null;
+// const n1: null = undefined; // Тип "undefined" не может быть назначен для типа "null"
+const n2: any = null;
+// const n3: number = null; // Тип "null" не может быть назначен для типа "number"
+// const n4: string = null; // Тип "null" не может быть назначен для типа "string"
+// const n4: boolean = null; // Тип "null" не может быть назначен для типа "boolean"
+// const n5: undefined = null; // Тип "null" не может быть назначен для типа "undefined"
+
+interface IUserNew {
+   name: string;
+}
+
+function getUser() {
+   if (Math.random() > 0.5) {
+      return null;
+   } else {
+      return {
+         name: 'Alex'
+      } as IUserNew;
+   }
+}
+
+const userItem = getUser();
+const username = userItem?.name; // string | undefined
+
+// разница null и undefined
+// null - это явно заданный неопределенный объект
+// undefined - говорит, что мы его не задали
+
+// Приведение типов
+let a1 = 5;
+let b: string = a1.toString();
+
+let c = '123';
+let d: number = parseInt(c);
+
+let e: string = new String(a).valueOf();
+let j: boolean = new Boolean(a).valueOf();
+
+interface IUserNew {
+   email: string;
+   login: string;
+}
+
+// три варианта, как можно протипизировать объект
+const user11: IUserNew = {
+   name: 'Alex',
+   email: 'alex@gmail.com',
+   login: 'Alextxnk'
+};
+
+const user12 = {
+   name: 'Alex',
+   email: 'alex@gmail.com',
+   login: 'Alextxnk'
+} as IUserNew;
+
+// !!! вот так лучше НЕ ДЕЛАТЬ, потому что в React в jsx/tsx будет ошибка
+const user13 = <IUserNew>{
+   name: 'Alex',
+   email: 'alex@gmail.com',
+   login: 'Alextxnk'
+};
+
+// преобразование одного объекта к другому
+interface Admin {
+   name: string;
+   role: number;
+}
+
+// вот так лучше не делать, потому что после компиляции подтянуься еще логин и email
+const admin: Admin = {
+   ...user11,
+   role: 1
+};
+
+// Функция мапинга
+function userToAdmin(user: IUserNew): Admin {
+   return {
+      name: user.name,
+      role: 1
+   };
+}
+
+// Type Guard
+function newLogId(id: string | number) {
+   if (newIsString(id)) {
+      console.log(id);
+   } else {
+      console.log(id);
+   }
+
+   // Flow типов
+   // id; // id: string | number
+}
+
+// пример функции с Type Guard
+// она возвращает boolean
+function newIsString(x: string | number): x is string {
+   return typeof x === 'string';
+}
+
+function setRole(user: IUserNew | Admin) {
+   
 }
