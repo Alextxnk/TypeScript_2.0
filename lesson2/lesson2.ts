@@ -466,6 +466,21 @@ function newIsString(x: string | number): x is string {
    return typeof x === 'string';
 }
 
-function setRole(user: IUserNew | Admin) {
-   
+function isAdmin(user: IUserNew | Admin): user is Admin {
+   return 'role' in user;
 }
+
+function isAdminAlternative(user: IUserNew | Admin): user is Admin {
+   return (user as Admin).role !== undefined;
+}
+
+function setRoleZero(user: IUserNew | Admin) {
+   if (isAdmin(user)) {
+      user.role = 0;
+   } else {
+      throw new Error('User is not admin');
+   }
+}
+
+// Задачка 4
+// см файл test4.ts
