@@ -124,7 +124,7 @@ let res1 = input; // можем только положить unknown в any
 let input2;
 let res2 = input2; // тут все хорошо
 // там где мы сделаем явные проверки типов у нас будет сужение типов, а остальных случаях останется unknown
-function run(i) {
+function run1(i) {
     if (typeof i === 'number') {
         i++;
     }
@@ -132,7 +132,7 @@ function run(i) {
         i; // unknown
     }
 }
-run(input);
+run1(input);
 function getData() {
     return __awaiter(this, void 0, void 0, function* () {
         try {

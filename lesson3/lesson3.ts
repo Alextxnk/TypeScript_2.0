@@ -113,3 +113,187 @@ function run(distance: number | string): number | string {
 }
 
 // геттеры и сеттеры - позволяют нам переопределить, то как будет присваиваться или получаться свойство нашего объекта
+// они позволяют дополнить логику полчения и присвоения свойства в нашем объекте
+// при этом у них есть некоторые ограничения, если не указывать явно их типы, то могут возникнуть проблемы
+// еще геттеры и сеттеры не могут быть асинхронными
+
+// обычные методы могут быть асинхронными
+class UserAuth {
+   login: string;
+   password: string;
+   createdAt: Date;
+
+   set setLogin(login: string) {
+      this.login = 'user-' + login;
+      this.createdAt = new Date();
+   }
+
+   get getLogin() {
+      return this.login;
+   }
+}
+
+const userAuth = new UserAuth();
+userAuth.setLogin = 'login';
+console.log(userAuth); // UserAuth { login: 'user-login' }
+console.log(userAuth.getLogin); // user-login
+
+// implements - реализация - имплементация классом интерфейса
+interface ILogger {
+   log(...args: string[]): void;
+   error(...args: string[]): void;
+}
+
+class Logger implements ILogger {
+   log(...args: string[]): void {
+      console.log(...args);
+   }
+   error(...args: string[]): void {
+      console.log(...args);
+   }
+}
+
+interface IPayable {
+   pay(paymentId: number): void;
+   price?: number;
+}
+
+// имплементируемый тип всегда должен быть шире типа в интерфейсе
+// класс может имплементировать множество интерфейсов
+class Payable implements IPayable, ILogger {
+   log(...args: string[]): void {
+      throw new Error('Method not implemented.');
+   }
+   error(...args: string[]): void {
+      throw new Error('Method not implemented.');
+   }
+   pay(paymentId: number | string): void {
+      //
+   }
+   price?: number | undefined;
+}
+
+// extends - наследование
+type NewPaymentStatus = 'new' | 'paid';
+
+class CPayment {
+   id: number;
+   status: NewPaymentStatus = 'new';
+
+   constructor(id: number) {
+      this.id = id;
+   }
+
+   pay() {
+      this.status = 'paid';
+   }
+}
+
+class PersistedPayment extends CPayment {
+   databaseId: number;
+   paiedAt: Date;
+
+   constructor() {
+      const id = Math.random();
+
+      // super нужен, если мы переопределяем конструктор
+      super(id);
+   }
+
+   save() {
+      //
+   }
+
+   // override method - переопределение метода
+   override pay(date?: Date) {
+      super.pay();
+
+      if (date) {
+         this.paiedAt = date;
+      }
+   }
+}
+
+// особенности наследования
+class User4 {
+   name: string = 'user';
+
+   constructor() {
+      console.log('user4 name:', this.name);
+   }
+}
+
+class Admin4 extends User4 {
+   name: string = 'admin';
+
+   constructor() {
+      super();
+      console.log('admin4 name:', this.name);
+   }
+}
+
+new Admin4();
+
+class HttpError extends Error {
+   code: number;
+
+   constructor(message: string, code?: number) {
+      super(message);
+      this.code = code ?? 500;
+   }
+}
+
+// Композиция против наследования
+class User5 {
+   name: string;
+
+   constructor(name: string) {
+      this.name = name;
+   }
+}
+
+// вот это у нас наследование
+// здесь мы тянем все методы из Array
+class Users extends Array<User5> {
+   searchByName(name: string) {
+      return this.filter((u) => u.name === name);
+   }
+
+   override toString(): string {
+      return this.map((u) => u.name).join(', ');
+   }
+}
+
+const users = new Users();
+users.push(new User5('Alex'));
+users.push(new User5('Dima'));
+console.log(users.toString());
+
+// а это композиция
+class UserList {
+   users: User[];
+
+   push(u: User) {
+      this.users.push(u);
+   }
+}
+
+// DDD
+class UserPayment {
+   date: Date;
+}
+
+class UserWithPayment extends UserPayment {
+   name: string;
+}
+
+// а лучше сделать композицию из user и payment
+class UserWithPayment2 {
+   user: User5;
+   payment: UserPayment;
+
+   constructor(user: User5, payment: UserPayment) {
+      this.payment = payment;
+      this.user = user;
+   }
+}

@@ -40,9 +40,9 @@ var PaymentStatus;
 })(PaymentStatus || (PaymentStatus = {}));
 class Payment {
     constructor(id) {
-        this.id = id;
-        this.createdAt = new Date();
         this.status = PaymentStatus.Holded;
+        this.createdAt = new Date();
+        this.id = id;
     }
     getPaymentLifeTime() {
         return new Date().getTime() - this.createdAt.getTime();
@@ -60,3 +60,126 @@ payment.unholdPayment();
 console.log(payment);
 const time = payment.getPaymentLifeTime();
 console.log(time);
+// продолжим с перегрузкой методов
+class User2 {
+    addSkill(skillOrSkills) {
+        if (typeof skillOrSkills === 'string') {
+            this.skills.push(skillOrSkills);
+        }
+        else {
+            this.skills.concat(skillOrSkills);
+        }
+    }
+}
+function run(distance) {
+    if (typeof distance === 'number') {
+        return 1;
+    }
+    else {
+        return 'distance';
+    }
+}
+// геттеры и сеттеры - позволяют нам переопределить, то как будет присваиваться или получаться свойство нашего объекта
+// они позволяют дополнить логику полчения и присвоения свойства в нашем объекте
+// при этом у них есть некоторые ограничения, если не указывать явно их типы, то могут возникнуть проблемы
+// еще геттеры и сеттеры не могут быть асинхронными
+// обычные методы могут быть асинхронными
+class UserAuth {
+    set setLogin(login) {
+        this.login = 'user-' + login;
+        this.createdAt = new Date();
+    }
+    get getLogin() {
+        return this.login;
+    }
+}
+const userAuth = new UserAuth();
+userAuth.setLogin = 'login';
+console.log(userAuth); // UserAuth { login: 'user-login' }
+console.log(userAuth.getLogin); // user-login
+class Logger {
+    log(...args) {
+        console.log(...args);
+    }
+    error(...args) {
+        console.log(...args);
+    }
+}
+// имплементируемый тип всегда должен быть шире типа в интерфейсе
+// класс может имплементировать множество интерфейсов
+class Payable {
+    log(...args) {
+        throw new Error('Method not implemented.');
+    }
+    error(...args) {
+        throw new Error('Method not implemented.');
+    }
+    pay(paymentId) {
+        //
+    }
+}
+class CPayment {
+    constructor(id) {
+        this.status = 'new';
+        this.id = id;
+    }
+    pay() {
+        this.status = 'paid';
+    }
+}
+class PersistedPayment extends CPayment {
+    constructor() {
+        const id = Math.random();
+        // super нужен, если мы переопределяем конструктор
+        super(id);
+    }
+    save() {
+        //
+    }
+    // override method - переопределение метода
+    pay(date) {
+        super.pay();
+        if (date) {
+            this.paiedAt = date;
+        }
+    }
+}
+// особенности наследования
+class User4 {
+    constructor() {
+        this.name = 'user';
+        console.log('user4 name:', this.name);
+    }
+}
+class Admin4 extends User4 {
+    constructor() {
+        super();
+        this.name = 'admin';
+        console.log('admin4 name:', this.name);
+    }
+}
+new Admin4();
+class HttpError extends Error {
+    constructor(message, code) {
+        super(message);
+        this.code = code !== null && code !== void 0 ? code : 500;
+    }
+}
+// Композиция против наследования
+class User5 {
+    constructor(name) {
+        this.name = name;
+    }
+}
+class Users extends Array {
+    searchByName(name) {
+        return this.filter((u) => u.name === name);
+    }
+    toString() {
+        return this.map((u) => u.name).join(', ');
+    }
+}
+const users = new Users();
+users.push(new User5('Alex'));
+users.push(new User5('Dima'));
+console.log(users.toString());
