@@ -267,7 +267,7 @@ let input2: any;
 let res2: string = input2; // тут все хорошо
 
 // там где мы сделаем явные проверки типов у нас будет сужение типов, а остальных случаях останется unknown
-function run(i: unknown) {
+function run1(i: unknown) {
    if (typeof i === 'number') {
       i++;
    } else {
@@ -275,7 +275,7 @@ function run(i: unknown) {
    }
 }
 
-run(input);
+run1(input);
 
 async function getData() {
    try {

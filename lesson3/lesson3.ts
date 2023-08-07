@@ -18,15 +18,98 @@
 
 class CUser {
    name: string;
+   age: number;
 
-   constructor(name: string) {
-      this.name = name;
+   // overload - перегрузка
+   // три перегрузки
+   constructor();
+   constructor(name: string);
+   constructor(age: number);
+
+   constructor(ageOrName?: string | number) {
+      if (typeof ageOrName === 'string') {
+         this.name = ageOrName;
+      } else if (typeof ageOrName === 'number') {
+         this.age = ageOrName;
+      }
    }
 }
 
 // делаем инстанс пользователя
-const cUser = new CUser('Alex');
-console.log(cUser);
+const user1 = new CUser('Alex');
+console.log(user1);
 
-cUser.name = 'Dima';
-console.log(cUser);
+user1.name = 'Dima';
+console.log(user1);
+
+class Admin {
+   role: number;
+}
+
+const admin1 = new Admin();
+admin1.role = 1;
+
+// методы класса
+// метод - это функция внутри класса, которая выполняет какие-то действия
+enum PaymentStatus {
+   Holded,
+   Processed,
+   Reversed
+}
+
+class Payment {
+   id: number;
+   status: PaymentStatus = PaymentStatus.Holded;
+   createdAt: Date = new Date();
+   updatedAt: Date;
+
+   constructor(id: number) {
+      this.id = id;
+   }
+
+   getPaymentLifeTime(): number {
+      return new Date().getTime() - this.createdAt.getTime();
+   }
+
+   unholdPayment(): void {
+      if (this.status === PaymentStatus.Processed) {
+         throw new Error('Платеж не может быть возвращен');
+      }
+
+      this.status = PaymentStatus.Reversed;
+      this.updatedAt = new Date();
+   }
+}
+
+const payment = new Payment(1);
+payment.unholdPayment();
+console.log(payment);
+const time = payment.getPaymentLifeTime();
+console.log(time);
+
+// продолжим с перегрузкой методов
+class User2 {
+   skills: string[];
+
+   addSkill(skill: string): void;
+   addSkill(skill: string[]): void;
+   addSkill(skillOrSkills: string | string[]): void {
+      if (typeof skillOrSkills === 'string') {
+         this.skills.push(skillOrSkills);
+      } else {
+         this.skills.concat(skillOrSkills);
+      }
+   }
+}
+
+function run(distance: string): string;
+function run(distance: number): number;
+function run(distance: number | string): number | string {
+   if (typeof distance === 'number') {
+      return 1;
+   } else {
+      return 'distance';
+   }
+}
+
+// геттеры и сеттеры - позволяют нам переопределить, то как будет присваиваться или получаться свойство нашего объекта
