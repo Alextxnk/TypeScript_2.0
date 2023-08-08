@@ -1,6 +1,18 @@
 "use strict";
 // Классы
 // JS и TS - мультипарадигменные ЯП, мы можем писать как в функциональном программировании, так и в ООП стиле
+var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
+    if (kind === "m") throw new TypeError("Private method is not writable");
+    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
+    return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
+};
+var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
+    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+    return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+};
+var _Vehicle_price;
 // TS похож на C# т.к. у него один автор
 // приниципы ООП:
 // 1. Абстракция - когда мы скрываем какие-то части нашей реализации или наоборот не дополняем наш объект для того,
@@ -171,6 +183,8 @@ class User5 {
         this.name = name;
     }
 }
+// вот это у нас наследование
+// здесь мы тянем все методы из Array
 class Users extends Array {
     searchByName(name) {
         return this.filter((u) => u.name === name);
@@ -183,3 +197,53 @@ const users = new Users();
 users.push(new User5('Alex'));
 users.push(new User5('Dima'));
 console.log(users.toString());
+// а это композиция
+class UserList {
+    push(u) {
+        this.users.push(u);
+    }
+}
+// DDD
+class UserPayment {
+}
+class UserWithPayment extends UserPayment {
+}
+// а лучше сделать композицию из user и payment
+class UserWithPayment2 {
+    constructor(user, payment) {
+        this.payment = payment;
+        this.user = user;
+    }
+}
+// видимость свойств и методов класса
+// приватные свойства недоступны извне, а доступны исключително внутри класса
+class Vehicle {
+    constructor() {
+        _Vehicle_price.set(this, void 0); // private в js стиле
+    }
+    set setModel(model) {
+        this.model = model;
+        __classPrivateFieldSet(this, _Vehicle_price, 100, "f");
+    }
+    get getModel() {
+        return this.model;
+    }
+    // проверяем эквивалентность двух свойств
+    isPriceEqual(v) {
+        return __classPrivateFieldGet(this, _Vehicle_price, "f") === __classPrivateFieldGet(v, _Vehicle_price, "f");
+    }
+    addDamage(damage) {
+        this.damages.push(damage);
+    }
+}
+_Vehicle_price = new WeakMap();
+// чтобы обратиться к private полям, нужно использовать геттеры и сеттеры
+// к proteced полям также нельзя обратиться извне, только в дочернем классе
+new Vehicle().brand = 'BMW';
+// private поля и методы класса не наследуются
+class EvroTruck extends Vehicle {
+    // proteced поля наследуются и мы можем обратиться к ним в дочернем классе
+    setRun(km) {
+        this.run = km / 0.62;
+    }
+}

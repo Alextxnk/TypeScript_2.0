@@ -297,3 +297,44 @@ class UserWithPayment2 {
       this.user = user;
    }
 }
+
+// видимость свойств и методов класса
+// приватные свойства недоступны извне, а доступны исключително внутри класса
+class Vehicle {
+   public brand: string;
+   private damages: string[];
+   private model: string;
+   protected run: number;
+   #price: number; // private в js стиле
+
+   set setModel(model: string) {
+      this.model = model;
+      this.#price = 100;
+   }
+
+   get getModel() {
+      return this.model;
+   }
+
+   // проверяем эквивалентность двух свойств
+   isPriceEqual(v: Vehicle) {
+      return this.#price === v.#price;
+   }
+
+   addDamage(damage: string) {
+      this.damages.push(damage);
+   }
+}
+
+// чтобы обратиться к private полям, нужно использовать геттеры и сеттеры
+// к proteced полям также нельзя обратиться извне, только в дочернем классе
+
+new Vehicle().brand = 'BMW';
+
+// private поля и методы класса не наследуются
+class EvroTruck extends Vehicle {
+   // proteced поля наследуются и мы можем обратиться к ним в дочернем классе
+   setRun(km: number) {
+      this.run = km / 0.62;
+   }
+}
