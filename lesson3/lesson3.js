@@ -1,6 +1,15 @@
 "use strict";
 // Классы
 // JS и TS - мультипарадигменные ЯП, мы можем писать как в функциональном программировании, так и в ООП стиле
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
     if (kind === "m") throw new TypeError("Private method is not writable");
     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
@@ -247,3 +256,69 @@ class EvroTruck extends Vehicle {
         this.run = km / 0.62;
     }
 }
+// статические свойства
+// в TS нет статичных классов, можно только делать статические поля и методы
+class UserService {
+    // static name: string; // Статическое свойство "name" конфликтует со встроенным свойством "Function.name" функции-конструктора "UserService"
+    // можем делать статические методы асинхронными
+    static getUser(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // return UserService.db.findById(id);
+        });
+    }
+    constructor(id) {
+        this.id = id;
+    }
+    create() {
+        UserService.db;
+    }
+}
+(() => {
+    UserService.db = 'str';
+})();
+// мы можем обращаться к полям, как к cвойствам объекта
+// без инстанцирования
+UserService.getUser(1);
+// при инстанциировании мы теряем доступ к статическим полям и методам
+const instance = new UserService(1);
+instance.create();
+// работа с this
+// this ссылается на контекст текущего объекта
+class PaymentClass {
+    constructor() {
+        this.date = new Date();
+        // чтобы не терялся контекст, мы можем использовать стрелочную функцию
+        // используется контекст уровня выше
+        this.getDateArrow = () => {
+            return this.date;
+        };
+    }
+    // явная проверка контекста
+    getDate() {
+        return this.date;
+    }
+}
+const p = new PaymentClass();
+console.log('payment date:', p.getDate());
+const userObj = {
+    id: 1,
+    // paymentDate: p.getDate,
+    paymentDate: p.getDate.bind(p),
+    paymentDateArrow: p.getDateArrow
+};
+// потеряли контекст
+// после bind привязали контекст
+console.log('paymentDate', userObj.paymentDate()); // undefined
+console.log('paymentDateArrow', userObj.paymentDateArrow());
+class PaymentPersistent extends PaymentClass {
+    save() {
+        return super.getDate(); // все ок
+    }
+    saveArrow() {
+        // return super.getDateArrow(); // получаем ошибку в runtime
+        return this.getDateArrow();
+    }
+}
+const persistent = new PaymentPersistent();
+console.log('persistent', persistent.save());
+console.log('persistentArrow', persistent.saveArrow());

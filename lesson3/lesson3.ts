@@ -343,10 +343,11 @@ class EvroTruck extends Vehicle {
 // в TS нет статичных классов, можно только делать статические поля и методы
 class UserService {
    static db: any;
+   // static name: string; // Статическое свойство "name" конфликтует со встроенным свойством "Function.name" функции-конструктора "UserService"
 
    // можем делать статические методы асинхронными
    static async getUser(id: number) {
-      return UserService.db.findById(id);
+      // return UserService.db.findById(id);
    }
 
    constructor(public id: number) {}
@@ -367,3 +368,50 @@ UserService.getUser(1);
 // при инстанциировании мы теряем доступ к статическим полям и методам
 const instance = new UserService(1);
 instance.create();
+
+// работа с this
+// this ссылается на контекст текущего объекта
+class PaymentClass {
+   private date: Date = new Date();
+
+   // явная проверка контекста
+   getDate(this: PaymentClass) {
+      return this.date;
+   }
+
+   // чтобы не терялся контекст, мы можем использовать стрелочную функцию
+   // используется контекст уровня выше
+   getDateArrow = () => {
+      return this.date;
+   };
+}
+
+const p = new PaymentClass();
+console.log('payment date:', p.getDate());
+
+const userObj = {
+   id: 1,
+   // paymentDate: p.getDate,
+   paymentDate: p.getDate.bind(p),
+   paymentDateArrow: p.getDateArrow
+};
+
+// потеряли контекст
+// после bind привязали контекст
+console.log('paymentDate', userObj.paymentDate()); // undefined
+console.log('paymentDateArrow', userObj.paymentDateArrow());
+
+class PaymentPersistent extends PaymentClass {
+   save() {
+      return super.getDate(); // все ок
+   }
+
+   saveArrow() {
+      // return super.getDateArrow(); // получаем ошибку в runtime
+      return this.getDateArrow(); // все ок
+   }
+}
+
+const persistent = new PaymentPersistent();
+console.log('persistent', persistent.save());
+console.log('persistentArrow', persistent.saveArrow());
