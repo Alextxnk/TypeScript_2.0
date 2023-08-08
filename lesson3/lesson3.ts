@@ -338,3 +338,32 @@ class EvroTruck extends Vehicle {
       this.run = km / 0.62;
    }
 }
+
+// статические свойства
+// в TS нет статичных классов, можно только делать статические поля и методы
+class UserService {
+   static db: any;
+
+   // можем делать статические методы асинхронными
+   static async getUser(id: number) {
+      return UserService.db.findById(id);
+   }
+
+   constructor(public id: number) {}
+
+   create() {
+      UserService.db;
+   }
+
+   static {
+      UserService.db = 'str';
+   }
+}
+
+// мы можем обращаться к полям, как к cвойствам объекта
+// без инстанцирования
+UserService.getUser(1);
+
+// при инстанциировании мы теряем доступ к статическим полям и методам
+const instance = new UserService(1);
+instance.create();
