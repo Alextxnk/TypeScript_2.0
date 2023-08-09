@@ -415,3 +415,43 @@ class PaymentPersistent extends PaymentClass {
 const persistent = new PaymentPersistent();
 console.log('persistent', persistent.save());
 console.log('persistentArrow', persistent.saveArrow());
+
+// типизация this
+class UserBuilder {
+   name: string;
+
+   setName(name: string): this {
+      this.name = name;
+      return this;
+   }
+
+   // TypeGuard
+   isAdmin(): this is AdminBuilder {
+      return this instanceof AdminBuilder;
+   }
+}
+
+class AdminBuilder extends UserBuilder {
+   roles: string[];
+}
+
+const resUs = new UserBuilder().setName('Alex user');
+const resAd = new AdminBuilder().setName('Alex admin');
+
+// еще с помощью this можем делать TypeGuard - он помогает нам ограничить поток выполнения
+// и в тех или иных ветках получать какой-то определенный тип
+
+let userB: UserBuilder | AdminBuilder = new UserBuilder();
+
+if (userB.isAdmin()) {
+   console.log('userB if', userB);
+} else {
+   console.log('userB else', userB);
+}
+
+// абстрактные классы
+abstract class Controller {
+   abstract handle(req: any): void;
+}
+
+// мы не можем создавать экземпляры абстрактных классов (не можем инстациировать их)
