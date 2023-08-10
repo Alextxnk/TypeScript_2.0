@@ -450,8 +450,31 @@ if (userB.isAdmin()) {
 }
 
 // абстрактные классы
+// abstract - модификатор класса
+
+// отличие абстрактного класса от интерфейса в том, что мы можем в абстрактом классе реализовывать какой-то функционал
+// и в классе наследнике мы уже получаем весь этот функционал
 abstract class Controller {
    abstract handle(req: any): void;
+
+   // нам не обязательно делать абстрактные методы внутри этого класса 
+   handleWithLogs(req: any): void {
+      console.log('start');
+      // также мы можем внутри этого класса вызывать абстрактные методы
+      this.handle(req);
+      console.log('end');
+   }
 }
 
 // мы не можем создавать экземпляры абстрактных классов (не можем инстациировать их)
+// new Controller() - error
+
+class UserController extends Controller {
+   handle(req: any): void {
+      console.log(req);
+   }
+}
+
+// и уже класс наследник мы можем инстациировать
+const userContr = new UserController();
+userContr.handleWithLogs('req'); // можем вызвать родительский метод 
