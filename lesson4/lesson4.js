@@ -87,4 +87,8 @@ class LCV extends VehicleC {
 const vehicle = kmToMiles(new VehicleC());
 const lcv = kmToMiles(new LCV());
 kmToMiles({ run: 120 });
-function logIdFunc(id) { }
+// мы можем использовать несколько Generic, если нам это необходимо
+function logIdFunc(id, data) {
+    console.log(id);
+    return { id, data };
+}

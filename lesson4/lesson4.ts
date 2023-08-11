@@ -104,4 +104,11 @@ const vehicle = kmToMiles(new VehicleC());
 const lcv = kmToMiles(new LCV());
 kmToMiles({ run: 120 });
 
-function logIdFunc<T extends string | number>(id: T) {}
+// мы можем использовать несколько Generic, если нам это необходимо
+function logIdFunc<T extends string | number, Y>(
+   id: T,
+   data: Y
+): { id: T; data: Y } {
+   console.log(id);
+   return { id, data };
+}
