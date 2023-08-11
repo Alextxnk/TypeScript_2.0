@@ -92,3 +92,45 @@ function logIdFunc(id, data) {
     console.log(id);
     return { id, data };
 }
+// Generic классы
+class Resp {
+    constructor(data, error) {
+        if (data) {
+            this.data = data;
+        }
+        if (error) {
+            this.error = error;
+        }
+    }
+}
+const respRes = new Resp('data', 500);
+class HTTPResp extends Resp {
+    setCode(code) {
+        this.code = code;
+    }
+}
+const httpRes = new HTTPResp();
+class List {
+    constructor(items) {
+        this.items = items;
+    }
+}
+// Миксин - это функция
+// расширяем функционал
+class ExtendedListClass extends List {
+    first() {
+        return this.items[0];
+    }
+}
+// теперь в виде миксина
+// DCI подход
+function ExtendedList(Base) {
+    return class ExtendedList extends Base {
+        first() {
+            return this.items[0];
+        }
+    };
+}
+const list = ExtendedList(List);
+const resList = new list(['first', 'second']);
+console.log(resList.first());

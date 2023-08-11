@@ -112,3 +112,73 @@ function logIdFunc<T extends string | number, Y>(
    console.log(id);
    return { id, data };
 }
+
+// Generic классы
+class Resp<D, E> {
+   data?: D;
+   error?: E;
+
+   constructor(data?: D, error?: E) {
+      if (data) {
+         this.data = data;
+      }
+
+      if (error) {
+         this.error = error;
+      }
+   }
+}
+
+const respRes = new Resp<string, number>('data', 500);
+
+class HTTPResp<F> extends Resp<string, number> {
+   code: F;
+
+   setCode(code: F) {
+      this.code = code;
+   }
+}
+
+const httpRes = new HTTPResp<number>();
+
+// Mixins
+// Наследование: Payment -> extends PaymentPersistent
+// Композиция: Engine, Wheels -> constructor Vehicle
+// Миксины: List, Accordion -> ListAccordion
+// по сути Миксины реализуют возможность наследования от нескольких классов,
+// либо они используются, как добавление примесей дополнительных свойств, тому или иному объекту без явного наследования
+
+// тип конструктора
+type Constructor = new (...args: any[]) => {};
+
+// Generic constructor
+type GConstructor<T = {}> = new (...args: any[]) => T;
+
+class List {
+   constructor(public items: string[]) {}
+}
+
+type ListType = GConstructor<List>;
+
+// Миксин - это функция
+// расширяем функционал
+
+class ExtendedListClass extends List {
+   first() {
+      return this.items[0];
+   }
+}
+
+// теперь в виде миксина
+// DCI подход
+function ExtendedList<TBase extends ListType>(Base: TBase) {
+   return class ExtendedList extends Base {
+      first() {
+         return this.items[0];
+      }
+   };
+}
+
+const list = ExtendedList(List);
+const resList = new list(['first', 'second']);
+console.log(resList.first());
