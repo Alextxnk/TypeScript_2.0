@@ -148,21 +148,27 @@ const httpRes = new HTTPResp<number>();
 // по сути Миксины реализуют возможность наследования от нескольких классов,
 // либо они используются, как добавление примесей дополнительных свойств, тому или иному объекту без явного наследования
 
-// тип конструктора
 type Constructor = new (...args: any[]) => {};
 
 // Generic constructor
+// еще мы можем задать значение по-умолчанию для дженерика
 type GConstructor<T = {}> = new (...args: any[]) => T;
 
 class List {
    constructor(public items: string[]) {}
 }
 
+class Accordion {
+   isOpened: boolean;
+}
+
 type ListType = GConstructor<List>;
+type AccordionType = GConstructor<Accordion>;
 
 // Миксин - это функция
 // расширяем функционал
 
+// сначала напишем обычный класс
 class ExtendedListClass extends List {
    first() {
       return this.items[0];
@@ -170,8 +176,14 @@ class ExtendedListClass extends List {
 }
 
 // теперь в виде миксина
-// DCI подход
-function ExtendedList<TBase extends ListType>(Base: TBase) {
+// миксины позволяют нам "делать наследование" нескольких кдассов одновременно
+
+// DCI подход - это преимущество, когда мы можем динамически подставлять
+// тот или иной необходимый нам объект в функцию
+
+// в миксине мы возвращаем класс, который наследует переданный класс
+// мы получаем в дженерике type checking классов
+function ExtendedList<TBase extends ListType & AccordionType>(Base: TBase) {
    return class ExtendedList extends Base {
       first() {
          return this.items[0];
@@ -179,6 +191,12 @@ function ExtendedList<TBase extends ListType>(Base: TBase) {
    };
 }
 
-const list = ExtendedList(List);
+// и в итоге этот класс получает все возможности класса Accordion и класса List
+class AccordionList {
+   isOpened: boolean;
+   constructor(public items: string[]) {}
+}
+
+const list = ExtendedList(AccordionList);
 const resList = new list(['first', 'second']);
-console.log(resList.first());
+console.log(resList.first()); // first
