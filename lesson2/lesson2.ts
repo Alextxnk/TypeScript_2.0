@@ -421,7 +421,7 @@ const user12 = {
    login: 'Alextxnk'
 } as IUserNew;
 
-// !!! вот так лучше НЕ ДЕЛАТЬ, потому что в React в jsx/tsx будет ошибка
+// !!! вот так лучше НЕ ДЕЛАТЬ, потому что в React в tsx будет ошибка
 const user13 = <IUserNew>{
    name: 'Alex',
    email: 'alex@gmail.com',
@@ -434,7 +434,7 @@ interface Admin {
    role: number;
 }
 
-// вот так лучше не делать, потому что после компиляции подтянуься еще логин и email
+// вот так лучше не делать, потому что после компиляции подтянутся еще логин и email
 const admin: Admin = {
    ...user11,
    role: 1
