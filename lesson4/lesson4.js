@@ -115,15 +115,22 @@ class List {
         this.items = items;
     }
 }
+class Accordion {
+}
 // Миксин - это функция
 // расширяем функционал
+// сначала напишем обычный класс
 class ExtendedListClass extends List {
     first() {
         return this.items[0];
     }
 }
 // теперь в виде миксина
-// DCI подход
+// миксины позволяют нам "делать наследование" нескольких кдассов одновременно
+// DCI подход - это преимущество, когда мы можем динамически подставлять
+// тот или иной необходимый нам объект в функцию
+// в миксине мы возвращаем класс, который наследует переданный класс
+// мы получаем в дженерике type checking классов
 function ExtendedList(Base) {
     return class ExtendedList extends Base {
         first() {
@@ -131,6 +138,12 @@ function ExtendedList(Base) {
         }
     };
 }
-const list = ExtendedList(List);
+// и в итоге этот класс получает все возможности класса Accordion и класса List
+class AccordionList {
+    constructor(items) {
+        this.items = items;
+    }
+}
+const list = ExtendedList(AccordionList);
 const resList = new list(['first', 'second']);
-console.log(resList.first());
+console.log(resList.first()); // first
