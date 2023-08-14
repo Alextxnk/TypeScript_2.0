@@ -30,3 +30,9 @@ const { awaited } = asyncCreator();
 awaited(first);
 awaited(second);
 awaited(third);
+
+type IsNever<T> = T extends never ? true : false;
+
+function descendingOrder(n: number): number {
+   return parseInt(String(n).split('').sort().reverse().join(''));
+}
