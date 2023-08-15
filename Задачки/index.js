@@ -24,3 +24,6 @@ const { awaited } = asyncCreator();
 awaited(first);
 awaited(second);
 awaited(third);
+function descendingOrder(n) {
+    return parseInt(String(n).split('').sort().reverse().join(''));
+}

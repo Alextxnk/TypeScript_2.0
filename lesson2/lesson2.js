@@ -239,13 +239,13 @@ const user12 = {
     email: 'alex@gmail.com',
     login: 'Alextxnk'
 };
-// !!! вот так лучше НЕ ДЕЛАТЬ, потому что в React в jsx/tsx будет ошибка
+// !!! вот так лучше НЕ ДЕЛАТЬ, потому что в React в tsx будет ошибка
 const user13 = {
     name: 'Alex',
     email: 'alex@gmail.com',
     login: 'Alextxnk'
 };
-// вот так лучше не делать, потому что после компиляции подтянуься еще логин и email
+// вот так лучше не делать, потому что после компиляции подтянутся еще логин и email
 const admin = Object.assign(Object.assign({}, user11), { role: 1 });
 // Функция мапинга
 function userToAdmin(user) {
