@@ -104,3 +104,35 @@ interface IHttpResp<T extends 'success' | 'failed'> {
    data: T extends 'success' ? string : Error;
    data2: T extends 'success' ? string : number;
 }
+
+// задачки
+type NonNullableType<T = string> = T extends null | undefined ? never : T;
+// const nl: NonNullableType<null> = null; // Тип "null" не может быть назначен для типа "never"
+
+const newObj1: Record<string, number | string> = {
+   id: 1,
+   name: 'Alex'
+};
+
+type OwnRecord<T extends string | number | symbol, Y> = { [key in T]: Y };
+
+const newObj2: OwnRecord<string, number | string> = {
+   id: 1,
+   name: 'Alex'
+};
+
+const newObj3: { [key in string | number | symbol]: number | string } = {
+   id: 1,
+   name: 'Alex'
+};
+
+class UserClass {
+   constructor(public name: string, public age: number) {}
+}
+
+function getUserClass(user: UserClass) {
+   console.log(user);
+}
+
+getUserClass(new UserClass('Alex', 21));
+getUserClass({ name: 'Alex', age: 21 });
