@@ -102,7 +102,7 @@ const something: number = Math.random() > 0.5 ? 1 : 0;
 interface IHttpResp<T extends 'success' | 'failed'> {
    code: number;
    data: T extends 'success' ? string : Error;
-   data2: T extends 'success' ? string : number;
+   // data2: T extends 'success' ? string : number;
 }
 
 // задачки
@@ -136,3 +136,51 @@ function getUserClass(user: UserClass) {
 
 getUserClass(new UserClass('Alex', 21));
 getUserClass({ name: 'Alex', age: 21 });
+
+// продолжаем
+const success: IHttpResp<'success'> = {
+   code: 200,
+   data: 'done'
+};
+
+const error: IHttpResp<'failed'> = {
+   code: 500,
+   data: new Error()
+};
+
+class NewUserClass {
+   id: number;
+   name: string;
+}
+
+class UserPersistent extends NewUserClass {
+   dbId: string;
+}
+
+// делаем перегрузки
+function getUser2(id: number): NewUserClass;
+function getUser2(dbId: string): UserPersistent;
+function getUser2(dbIdOrId: string | number): NewUserClass | UserPersistent {
+   if (typeof dbIdOrId === 'number') {
+      return new NewUserClass();
+   } else {
+      return new UserPersistent();
+   }
+}
+
+type UserOrUserPersistent<T extends string | number> = T extends number
+   ? NewUserClass
+   : UserPersistent;
+
+function getUser3<T extends string | number>(id: T): UserOrUserPersistent<T> {
+   if (typeof id === 'number') {
+      return new NewUserClass() as UserOrUserPersistent<T>;
+   } else {
+      return new UserPersistent() as UserOrUserPersistent<T>;
+   }
+}
+
+const resUser1 = getUser3(1);
+console.log(resUser1);
+const resUser2 = getUser3('1');
+console.log(resUser2);
