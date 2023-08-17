@@ -70,3 +70,26 @@ type ExcludeEx = Exclude<'from' | 'to' | PaymentOmit, string>; // PaymentOmit
 
 // POLYFILL Exclude
 type OwnExclude<T, U> = T extends U ? never : T;
+
+// return type, parameters, constructor parameters
+class ServiceUserC {
+   constructor(public id: number, public name: string) {}
+}
+
+function getUserDataFunc(id: number): ServiceUserC {
+   return new ServiceUserC(id, 'Alex');
+}
+
+// получение выходных параметров
+type RT = ReturnType<typeof getUserDataFunc>; // ServiceUserC
+type RT2 = ReturnType<() => void>; // void
+type RT3 = ReturnType<<T>() => T>; // unknown
+type RT4 = ReturnType<<T extends string>() => T>; // string
+
+// получение входных параметров
+type PT = Parameters<typeof getUserDataFunc>; // [id: number]
+
+type first = PT[0];
+
+type CP = ConstructorParameters<typeof ServiceUserC>; // [id: number, name: string]
+type IP = InstanceType<typeof ServiceUserC>; // ServiceUserC
