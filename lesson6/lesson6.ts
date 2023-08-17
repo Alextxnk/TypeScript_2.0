@@ -93,3 +93,28 @@ type first = PT[0];
 
 type CP = ConstructorParameters<typeof ServiceUserC>; // [id: number, name: string]
 type IP = InstanceType<typeof ServiceUserC>; // ServiceUserC
+
+// awaited
+type A = Awaited<Promise<string>>;
+type A2 = Awaited<Promise<Promise<string>>>;
+
+interface IMenu {
+   name: string;
+   url: string;
+}
+
+async function getMenu(): Promise<IMenu[]> {
+   return [{ name: 'Analytics', url: './Analytics' }];
+}
+
+type Return = Awaited<ReturnType<typeof getMenu>>; // IMenu[]
+
+// более полная, лучшая типизация
+async function getArray<T>(x: T): Promise<Awaited<T>[]> {
+   return [await x];
+}
+
+// нежели чем было в старых версиях TS, до появления Awaited
+async function getArrayOld<T>(x: T): Promise<T[]> {
+   return [await x];
+}
