@@ -222,14 +222,42 @@ type UserRoles = {
 // +? - все свойства становятся НЕобязательными
 // Exclude - делает фильтр - убираем элемент из второго аргумента Exclude
 type ModifierToAccess<Type> = {
-   +readonly [Property in keyof Type as Exclude<`canAccess${string & Property}`, 'canAccessadminPanel'>]-?: boolean;
+   +readonly [Property in keyof Type as Exclude<
+      `canAccess${Capitalize<string & Property>}`,
+      'canAccessAdminPanel'
+   >]-?: boolean;
 };
 
-type UserAccess1 = { 
-   customers?: boolean; 
+type UserAccess1 = {
+   customers?: boolean;
    projects?: boolean;
    adminPanel?: boolean;
 };
 
 // получили то же самое, что и в UserAccess1
 type UserAccess2 = ModifierToAccess<UserRoles>;
+
+// template literal types
+type ReadOrWrite = 'read' | 'write';
+type Bulk = 'bulk' | '';
+
+// дженерик Capitalize делает CamelCase, есть еще дженерики UpperCase и LowerCase
+// делаем из union типов, новый тип
+type Access = `can${Capitalize<ReadOrWrite>}${Capitalize<Bulk>}`;
+
+type ErrorOrSuccess = 'error' | 'success';
+
+type ResponseT = {
+   result: `http${Capitalize<ErrorOrSuccess>}`;
+};
+
+const resp: ResponseT = {
+   result: 'httpSuccess'
+};
+
+// еще мы можем вытащить типы, если нам это понадобится
+// infer вытаскивает нужные нам значения
+// делаем распаковку типа
+type ReadOrWriteBulk<T> = T extends `can${infer R}` ? R : never;
+
+type T = ReadOrWriteBulk<Access>;

@@ -121,3 +121,6 @@ const transaction2 = {
     fromTo: ['1', '2']
 };
 runTransaction(transaction2);
+const resp = {
+    result: 'httpSuccess'
+};
