@@ -184,3 +184,52 @@ const resUser1 = getUser3(1);
 console.log(resUser1);
 const resUser2 = getUser3('1');
 console.log(resUser2);
+
+// infer оператор
+function runTransaction(transaction: { fromTo: [string, string] }) {
+   console.log(transaction);
+}
+
+const transaction1 = {
+   fromTo: ['1', '2'] as [string, string]
+};
+
+runTransaction(transaction1);
+
+// после использования infer
+const transaction2: GetFirstArg<typeof runTransaction> = {
+   fromTo: ['1', '2']
+};
+
+runTransaction(transaction2);
+
+// infer вытаскивает нужный нам тип и после этого мы можем этот тип переиспользовать
+type GetFirstArg<T> = T extends (first: infer First, ...args: any[]) => any
+   ? First
+   : never;
+
+type Modifier = 'crete' | 'read' | 'update' | 'delete';
+
+// mapped types
+type UserRoles = {
+   customers?: Modifier;
+   projects?: Modifier;
+   adminPanel?: Modifier;
+};
+
+// вот так он будет выглядеть
+// -? - все свойства становятся обязательными
+// +? - все свойства становятся НЕобязательными
+// Exclude - делает фильтр - убираем элемент из второго аргумента Exclude
+type ModifierToAccess<Type> = {
+   +readonly [Property in keyof Type as Exclude<`canAccess${string & Property}`, 'canAccessadminPanel'>]-?: boolean;
+};
+
+type UserAccess1 = { 
+   customers?: boolean; 
+   projects?: boolean;
+   adminPanel?: boolean;
+};
+
+// получили то же самое, что и в UserAccess1
+type UserAccess2 = ModifierToAccess<UserRoles>;
