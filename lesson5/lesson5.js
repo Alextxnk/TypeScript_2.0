@@ -108,3 +108,16 @@ const resUser1 = getUser3(1);
 console.log(resUser1);
 const resUser2 = getUser3('1');
 console.log(resUser2);
+// infer оператор
+function runTransaction(transaction) {
+    console.log(transaction);
+}
+const transaction1 = {
+    fromTo: ['1', '2']
+};
+runTransaction(transaction1);
+// после использования infer
+const transaction2 = {
+    fromTo: ['1', '2']
+};
+runTransaction(transaction2);
